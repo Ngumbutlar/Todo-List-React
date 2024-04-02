@@ -1,9 +1,17 @@
-import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState } from "react";
+import "./App.css";
+import Form from "./components/Form";
+import { Todo } from "./components/Todo";
+
+const task = {
+  id: Date.now(),
+  text: "sample Task",
+  completed: false,
+};
 
 function App() {
-  const [tasks, setTasks] = useState([]);
+  // always initialize the state with the type of expected value.
+  const [tasks, setTasks] = useState([task]);
   const [completedTasks, setcopletedTasks] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -16,7 +24,7 @@ function App() {
     if (inputValue.trim() !== "") {
       const newTask = {
         id: Date.now(),
-        text: inputValue,
+        text: inputValue.trim(), // remove terminal whitepsaces on the input value
         completed: false,
       };
 
@@ -56,25 +64,11 @@ function App() {
       <h2>Todo App</h2>
       <div className="card">
         <div className="card-header w-100">
-          <form
-            className="row align-content-center justify-content-center g-3"
-            onSubmit={handleformSubmit}
-          >
-            <div className="col-auto">
-              <input
-                className="form-control mb-2"
-                type="text"
-                placeholder="Add Task"
-                value={inputValue}
-                onChange={handleInputChange}
-              ></input>
-            </div>
-            <div className="col-auto">
-              <button className="btn" type="submit">
-                Add
-              </button>
-            </div>
-          </form>
+          <Form
+            inputValue={inputValue}
+            handleInputChange={handleInputChange}
+            handleformSubmit={handleformSubmit}
+          />
         </div>
         <div className="card-body w-100">
           <div className="row align-items-center justify-content-center">
@@ -84,31 +78,11 @@ function App() {
             <div className="col-auto">
               <ul className="list-group">
                 {tasks.map((task) => (
-                  <li
-                    key={task.id}
-                    className={`list-group-item d-flex align-items-center ${
-                      task.completed ? "completed" : ""
-                    }`}
-                  >
-                    <input
-                      className="form-check-input me-2"
-                      type="checkbox"
-                      checked={task.completed}
-                      onChange={() => handletoggleComplete(task.id)}
-                    />
-                    <label
-                      className="form-check-label"
-                      htmlFor="flexCheckDefault"
-                    >
-                      {task.text}
-                    </label>
-                    <a
-                      className="ms-auto"
-                      onClick={() => handleDeleteTask(task.id)}
-                    >
-                      <i className="bi bi-trash "></i>
-                    </a>
-                  </li>
+                  <Todo
+                    task={task}
+                    handletoggleComplete={handletoggleComplete}
+                    handleDeleteTask={handleDeleteTask}
+                  />
                 ))}
               </ul>
             </div>
