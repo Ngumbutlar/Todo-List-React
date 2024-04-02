@@ -24,6 +24,7 @@ export const Todo = ({ task, handletoggleComplete, handleDeleteTask }) => {
       <label className="form-check-label" htmlFor="flexCheckDefault">
         {task?.text}
       </label>
+      {/* eslint-disable-next-line */}
       <a className="ms-auto" onClick={() => handleDeleteTask(task.id)}>
         <i className="bi bi-trash "></i>
       </a>
