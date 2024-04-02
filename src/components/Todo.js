@@ -12,7 +12,7 @@ export const Todo = ({ task, handletoggleComplete, handleDeleteTask }) => {
     <li
       key={task?.id}
       className={`list-group-item d-flex align-items-center ${
-        task?.completed ? "completed" : ""
+        task?.completed ? "completed completed-task" : ""
       }`}
     >
       <input

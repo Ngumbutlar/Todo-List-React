@@ -12,6 +12,8 @@ const task = {
 function App() {
   // always initialize the state with the type of expected value.
   const [tasks, setTasks] = useState([task]);
+
+  // use same task state to track the tasks
   const [completedTasks, setcopletedTasks] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -35,7 +37,8 @@ function App() {
 
   const handleDeleteTask = (taskId) => {
     setTasks(tasks.filter((task) => task.id !== taskId));
-    setcopletedTasks(completedTasks.filter((task) => task.id !== taskId));
+    // no longer necessary
+    // setcopletedTasks(completedTasks.filter((task) => task.id !== taskId));
   };
 
   const handletoggleComplete = (taskId) => {
@@ -50,13 +53,13 @@ function App() {
     });
     setTasks(updatedTasks);
 
-    const completedTask = updatedTasks.find((task) => task.id === taskId);
-    if (completedTask.completed) {
-      setcopletedTasks([...completedTasks, completedTask]);
-      setTasks(updatedTasks.filter((task) => task.id !== taskId));
-    } else {
-      setcopletedTasks(completedTasks.filter((task) => task.id !== taskId));
-    }
+    // const completedTask = updatedTasks.find((task) => task.id === taskId);
+    // if (completedTask.completed) {
+    //   setcopletedTasks([...completedTasks, completedTask]);
+    //   setTasks(updatedTasks.filter((task) => task.id !== taskId));
+    // } else {
+    //   setcopletedTasks(completedTasks.filter((task) => task.id !== taskId));
+    // }
   };
 
   return (
@@ -73,34 +76,46 @@ function App() {
         <div className="card-body w-100">
           <div className="row align-items-center justify-content-center">
             <div className="col-12">
-              <p>Task to do - {tasks.length}</p>
+              <p>
+                Task to do - {tasks.filter((task) => !task.completed).length}
+              </p>
             </div>
             <div className="col-auto">
               <ul className="list-group">
-                {tasks.map((task) => (
-                  <Todo
-                    task={task}
-                    handletoggleComplete={handletoggleComplete}
-                    handleDeleteTask={handleDeleteTask}
-                  />
-                ))}
+                {tasks.map((task) => {
+                  return !task.completed ? (
+                    <Todo
+                      task={task}
+                      handletoggleComplete={handletoggleComplete}
+                      handleDeleteTask={handleDeleteTask}
+                    />
+                  ) : (
+                    <></>
+                  );
+                })}
               </ul>
             </div>
           </div>
           <div className="complete-tasks row align-items-center justify-content-center">
             <div className="col-12">
-              <p>Completed Tasks - {completedTasks.length}</p>
+              <p>
+                Completed Tasks -{" "}
+                {tasks.filter((task) => task.completed).length}
+              </p>
             </div>
             <div className="col-auto">
               <ul className="list-group">
-                {completedTasks.map((task) => (
-                  <li
-                    key={task.id}
-                    className="list-group-item d-flex align-items-center completed-task"
-                  >
-                    {task.text}
-                  </li>
-                ))}
+                {tasks.map((task) => {
+                  return task?.completed ? (
+                    <Todo
+                      task={task}
+                      handletoggleComplete={handletoggleComplete}
+                      handleDeleteTask={handleDeleteTask}
+                    />
+                  ) : (
+                    <></>
+                  );
+                })}
               </ul>
             </div>
           </div>
