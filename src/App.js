@@ -1,11 +1,22 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {db} from './firebase';
+import {collection, onSnapshot, orderBy} from 'firebase/firestore';
+
+const q = query(collection(db, 'todos'), orderBy)
+
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [completedTasks, setcopletedTasks] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  useEffect(() => {
+    onSnapshot(collection(db, 'todos'), (snapshot) => {
+      setTodos(snapshot.docs.map(doc.data()))
+      
+    })
+  }, [input]);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -13,12 +24,17 @@ function App() {
 
   const handleformSubmit = (e) => {
     e.preventDefault();
-    if (inputValue.trim() !== "") {
-      const newTask = {
-        id: Date.now(),
-        text: inputValue,
-        completed: false,
-      };
+    // // if (inputValue.trim() !== "") {
+    //   const newTask = {
+    // //     id: Date.now(),
+    // //     text: inputValue,
+    // //     completed: false,
+       
+    // //   };
+    addDoc(collection(db, "todos"), {
+      todo: input,
+      timestamp: serverTimestap(),
+    });
 
       setTasks([...tasks, newTask]);
       setInputValue("");
