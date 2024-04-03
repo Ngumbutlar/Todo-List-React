@@ -1,9 +1,19 @@
-import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState } from "react";
+import "./App.css";
+import Form from "./components/Form";
+import { Todo } from "./components/Todo";
+
+const task = {
+  id: Date.now(),
+  text: "sample Task",
+  completed: false,
+};
 
 function App() {
-  const [tasks, setTasks] = useState([]);
+  // always initialize the state with the type of expected value.
+  const [tasks, setTasks] = useState([task]);
+
+  // use same task state to track the tasks
   const [completedTasks, setcopletedTasks] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -16,7 +26,7 @@ function App() {
     if (inputValue.trim() !== "") {
       const newTask = {
         id: Date.now(),
-        text: inputValue,
+        text: inputValue.trim(), // remove terminal whitepsaces on the input value
         completed: false,
       };
 
@@ -27,7 +37,8 @@ function App() {
 
   const handleDeleteTask = (taskId) => {
     setTasks(tasks.filter((task) => task.id !== taskId));
-    setcopletedTasks(completedTasks.filter((task) => task.id !== taskId));
+    // no longer necessary
+    // setcopletedTasks(completedTasks.filter((task) => task.id !== taskId));
   };
 
   const handletoggleComplete = (taskId) => {
@@ -42,13 +53,13 @@ function App() {
     });
     setTasks(updatedTasks);
 
-    const completedTask = updatedTasks.find((task) => task.id === taskId);
-    if (completedTask.completed) {
-      setcopletedTasks([...completedTasks, completedTask]);
-      setTasks(updatedTasks.filter((task) => task.id !== taskId));
-    } else {
-      setcopletedTasks(completedTasks.filter((task) => task.id !== taskId));
-    }
+    // const completedTask = updatedTasks.find((task) => task.id === taskId);
+    // if (completedTask.completed) {
+    //   setcopletedTasks([...completedTasks, completedTask]);
+    //   setTasks(updatedTasks.filter((task) => task.id !== taskId));
+    // } else {
+    //   setcopletedTasks(completedTasks.filter((task) => task.id !== taskId));
+    // }
   };
 
   return (
@@ -56,77 +67,55 @@ function App() {
       <h2>Todo App</h2>
       <div className="card">
         <div className="card-header w-100">
-          <form
-            className="row align-content-center justify-content-center g-3"
-            onSubmit={handleformSubmit}
-          >
-            <div className="col-auto">
-              <input
-                className="form-control mb-2"
-                type="text"
-                placeholder="Add Task"
-                value={inputValue}
-                onChange={handleInputChange}
-              ></input>
-            </div>
-            <div className="col-auto">
-              <button className="btn" type="submit">
-                Add
-              </button>
-            </div>
-          </form>
+          <Form
+            inputValue={inputValue}
+            handleInputChange={handleInputChange}
+            handleformSubmit={handleformSubmit}
+          />
         </div>
         <div className="card-body w-100">
           <div className="row align-items-center justify-content-center">
             <div className="col-12">
-              <p>Task to do - {tasks.length}</p>
+              <p>
+                Task to do - {tasks.filter((task) => !task.completed).length}
+              </p>
             </div>
             <div className="col-auto">
               <ul className="list-group">
-                {tasks.map((task) => (
-                  <li
-                    key={task.id}
-                    className={`list-group-item d-flex align-items-center ${
-                      task.completed ? "completed" : ""
-                    }`}
-                  >
-                    <input
-                      className="form-check-input me-2"
-                      type="checkbox"
-                      checked={task.completed}
-                      onChange={() => handletoggleComplete(task.id)}
+                {tasks.map((task) => {
+                  return !task.completed ? (
+                    <Todo
+                      task={task}
+                      handletoggleComplete={handletoggleComplete}
+                      handleDeleteTask={handleDeleteTask}
                     />
-                    <label
-                      className="form-check-label"
-                      htmlFor="flexCheckDefault"
-                    >
-                      {task.text}
-                    </label>
-                    <a
-                      className="ms-auto"
-                      onClick={() => handleDeleteTask(task.id)}
-                    >
-                      <i className="bi bi-trash "></i>
-                    </a>
-                  </li>
-                ))}
+                  ) : (
+                    <></>
+                  );
+                })}
               </ul>
             </div>
           </div>
           <div className="complete-tasks row align-items-center justify-content-center">
             <div className="col-12">
-              <p>Completed Tasks - {completedTasks.length}</p>
+              <p>
+                Completed Tasks -{" "}
+                {tasks.filter((task) => task.completed).length}
+              </p>
             </div>
             <div className="col-auto">
               <ul className="list-group">
-                {completedTasks.map((task) => (
-                  <li
-                    key={task.id}
-                    className="list-group-item d-flex align-items-center completed-task"
-                  >
-                    {task.text}
-                  </li>
-                ))}
+                {tasks.map((task) => {
+                  return task?.completed ? (
+                    <Todo
+                      task={task}
+                      handletoggleComplete={handletoggleComplete}
+                      handleDeleteTask={handleDeleteTask}
+                    />
+                  ) : (
+                    <></>
+                  );
+                })}
               </ul>
             </div>
           </div>
