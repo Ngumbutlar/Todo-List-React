@@ -1,4 +1,6 @@
+import { doc, deleteDoc } from "firebase/firestore";
 import React from "react";
+import { db } from "../firebase";
 
 /**
  * A Todo component
@@ -22,10 +24,13 @@ export const Todo = ({ task, handletoggleComplete, handleDeleteTask }) => {
         onChange={() => handletoggleComplete(task?.id)}
       />
       <label className="form-check-label" htmlFor="flexCheckDefault">
-        {task?.text}
+        {task?.item?.task?.text??task?.item.task}
       </label>
       {/* eslint-disable-next-line */}
-      <a className="ms-auto" onClick={() => handleDeleteTask(task.id)}>
+      <a className="ms-auto" onClick={() => {
+        handleDeleteTask(task.id)
+        deleteDoc(doc(db, "tasks", task.id))
+      }}>
         <i className="bi bi-trash "></i>
       </a>
     </li>

@@ -1,30 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import Form from "./components/Form";
 import { Todo } from "./components/Todo";
+import { addDoc, collection, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
+import { db } from "./firebase";
 
-const task = {
-  id: Date.now(),
-  text: "sample Task",
-  completed: false,
-};
+const q = query(collection(db, 'tasks'), orderBy('timestamp', 'desc'));
+
+
+
+// const task = {
+//   id: Date.now(),
+//   text: "",
+//   completed: false,
+// };
 
 function App() {
   // always initialize the state with the type of expected value.
-  const [tasks, setTasks] = useState([task]);
-
-  // use same task state to track the tasks
-  const [completedTasks, setcopletedTasks] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [inputValue, setInputValue] = useState("");
   useEffect(() => {
-    onSnapshot(collection(db, 'todos'), (snapshot) => {
-      setTodos(snapshot.docs.map(doc.data()))
+    onSnapshot(q, (snapshot) =>{
+      setTasks(snapshot.docs.map(doc => ({
+        id: doc.id,
+        item: doc.data()
+      })))
+      snapshot.docs.map(doc => console.log(doc.data()))
       
-    })
-  }, [input]);
+    });
+  }, [inputValue])
+
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
+  
   };
 
   const handleformSubmit = (e) => {
@@ -35,6 +44,10 @@ function App() {
         text: inputValue.trim(), // remove terminal whitepsaces on the input value
         completed: false,
       };
+      addDoc(collection(db, "tasks"), {
+        task: newTask,
+        timestamp: serverTimestamp(),
+      });
 
       setTasks([...tasks, newTask]);
       setInputValue("");

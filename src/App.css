@@ -45,3 +45,10 @@ background-color: #ffff;
   text-decoration: line-through;
 }
 
+/* @media screen (min-width:){
+  .card-body li{
+    max-width: 200px;
+  }
+  
+} */
+
